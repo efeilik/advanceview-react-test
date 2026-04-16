@@ -34,9 +34,9 @@ export default function ProductList({ items, onIncrement, onDecrement, onRemove 
 
   return (
     <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-slate-900/5">
-      {items.map((item, index) => (
+      {items.map((item) => (
         <li
-          key={index}
+          key={item.id}
           className="flex flex-col gap-3 px-4 py-4 transition hover:bg-slate-50/80 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="min-w-0 flex-1">
