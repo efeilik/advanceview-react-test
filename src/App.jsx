@@ -26,14 +26,7 @@ export default function App() {
   };
 
   const incrementQuantity = (id) => {
-    setItems((prev) => {
-      const copy = [...prev];
-      const target = copy.find((p) => p.id === id);
-      if (target) {
-        target.quantity += 1;
-      }
-      return copy;
-    });
+    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p)));
   };
 
   const decrementQuantity = (id) => {
