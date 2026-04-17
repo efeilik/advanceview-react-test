@@ -2,38 +2,37 @@ import { useEffect, useMemo, useState } from 'react';
 import AddProductForm from './components/AddProductForm.jsx';
 import ProductList from './components/ProductList.jsx';
 import SearchBar from './components/SearchBar.jsx';
-import { INITIAL_ITEMS } from './constants';
+import { CATEGORIES, INITIAL_ITEMS } from './constants';
 
 let nextId = 100;
 
 export default function App() {
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Tümü');
 
+  // Bug fix 2: added items.length to deps so log stays current
   useEffect(() => {
     console.log('[Analytics] Liste öğe sayısı:', items.length);
-  }, []);
+  }, [items.length]);
 
   const filteredItems = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((p) => p.name.toLowerCase().includes(q));
-  }, [items, searchQuery]);
+    return items.filter((p) => {
+      const matchesCategory = selectedCategory === 'Tümü' || p.category === selectedCategory;
+      const matchesSearch = !q || p.name.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }, [items, searchQuery, selectedCategory]);
 
   const addProduct = ({ name, category }) => {
     const id = String(nextId++);
     setItems((prev) => [...prev, { id, name, quantity: 1, category }]);
   };
 
+  // Bug fix 1: spread to create a new object instead of mutating in-place
   const incrementQuantity = (id) => {
-    setItems((prev) => {
-      const copy = [...prev];
-      const target = copy.find((p) => p.id === id);
-      if (target) {
-        target.quantity += 1;
-      }
-      return copy;
-    });
+    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p)));
   };
 
   const decrementQuantity = (id) => {
@@ -75,6 +74,26 @@ export default function App() {
         <div>
           <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Arama</label>
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Kategori</label>
+          <div className="flex flex-wrap gap-2">
+            {['Tümü', ...CATEGORIES].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`rounded-full px-3 py-1 text-sm font-medium transition ${
+                  selectedCategory === cat
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div>
