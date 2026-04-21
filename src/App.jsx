@@ -5,7 +5,7 @@ import SearchBar from './components/SearchBar.jsx';
 import { INITIAL_ITEMS } from './constants';
 
 let nextId = 100;
-
+//deneme 
 export default function App() {
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [searchQuery, setSearchQuery] = useState('');
